@@ -165,25 +165,23 @@ To get started with the demonstration, create an application on the OpenShift cl
   <details>
   <summary>Click to see the code.</summary>
 
-    For anyone interested, the exact Java code is as follows:
+  ```java
+  @GET
+  @Path("fill/{index}")
+  @Produces(MediaType.TEXT_PLAIN)
+  public String fill(@PathParam("index") String index) throws Exception {
 
-    ```java
-    @GET
-    @Path("fill/{index}")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String fill(@PathParam("index") String index) throws Exception {
-
-        HashMap<String, String> mem = new HashMap<String, String>();
-        char[] chars = new char[2 * 1024 * 1024];
-        Arrays.fill(chars, 'f');
-        mem.put(Math.random() + "", new String(chars));
-        System.out.println("Added " + index + "MB");
-        return "Added " + index + "MB \n";
-    }
-    ```
+      HashMap<String, String> mem = new HashMap<String, String>();
+      char[] chars = new char[2 * 1024 * 1024];
+      Arrays.fill(chars, 'f');
+      mem.put(Math.random() + "", new String(chars));
+      System.out.println("Added " + index + "MB");
+      return "Added " + index + "MB \n";
+  }
+  ```
   </details>
 
-1. **From your command line terminal, set the hostname of your Quarkus application route as the variable `$QUARKUS_HOST`.**
+2. **From your command line terminal, set the hostname of your Quarkus application route as the variable `$QUARKUS_HOST`.**
 
   ```text
   QUARKUS_HOST=$(oc get route autoscale-quarkus -o=jsonpath='{.spec.host}')
