@@ -20,7 +20,7 @@ Scalability is one of the primary reasons the IT world is moving large portions 
 
 Two of the ways that Kubernetes provides rapid scalability are Horizontal Pod Autoscaling and Vertical Pod Autoscaling. 
 
-**Horizontal Pod Autoscaling** automatically changes the *number of Pods* in a workload resource, such as a Deployment. When Kubernetes notices that there is an increased load on an application, it will automatically scale up Pods, and when the load decreases, it will automatically scale down the number of Pods.
+**Horizontal Pod Autoscaling** automatically changes the *number of Pods* in a workload resource, such as a Deployment. When Kubernetes notices that there is an increased load on an application, it will automatically scale up up the number of Pods, and when the load decreases, it will automatically scale down the number of Pods.
 
 **Vertical Pod Autoscaling**, on the other hand, will *automatically adjust the resource requests and limits* for a workload resource, such as a Deployment. Instead of scaling the number of Pods up or down, the number of Pods stays the same, but each is allowed to use more CPU or memory than originally set.
 
@@ -35,17 +35,17 @@ To get started with the demonstration, create an application on the OpenShift cl
 
 *Please note that all of the following steps can be completed either in the OpenShift web console or through the OpenShift command line. This demonstration will swap between the two methods.*
 
-1. Log into your OpenShift cluster using OpenShift command line
+1. **Log into your OpenShift cluster using OpenShift command line.**
 
   You can find credentials and all necessary information from the *OpenShift on IBM Z - Bastion with Single Master Node* tile in your TechZone [My Reservations Page](https://techzone.ibm.com/my/reservations). Further details can be found within your *Project Kit*, which is linked on your reservation page.
 
-1. Create a new project:
+1. Cr**eate a new project.**
 
   ```text
   oc new-project hpa-demo
   ```
 
-2. In the new project, deploy a pre-built Quarkus container image:
+1. **In the new project, deploy a pre-built Quarkus container image.**
 
   ```text
   oc new-app --image=quay.io/mmondics/autoscale-quarkus:v1 --name=autoscale-quarkus
@@ -77,7 +77,7 @@ To get started with the demonstration, create an application on the OpenShift cl
   
   </details>
 
-1. Expose the Service to create a Route:
+1. **Expose the Service to create a Route.**
 
   ```text
   oc expose service/autoscale-quarkus
@@ -85,7 +85,7 @@ To get started with the demonstration, create an application on the OpenShift cl
 
   By default, you have one Quarkus Pod running in your project that is responsible for all requests that hit the application.
 
-1. Look at your one pod:
+1. **Look at your one pod.**
 
   ```text
   oc get pods
@@ -98,7 +98,7 @@ To get started with the demonstration, create an application on the OpenShift cl
 
   Because there is only one replica of the Quarkus application running, it is solely responsible for all requests that come into the cluster through its exposed Route. Furthermore, because no resource requests or limits have been set for this application, it has the capability to use as many resources as it needs with no upper bound. This is clearly not a viable setup for production workloads or any situation where high availability and performance are needed. For this reason, setting resource requests and limits is considered a best practice. Furthermore, they are required for horizontal and vertical Pod autoscaling, so the next step is to set these for the Quarkus Deployment.
 
-1. Find your Pod's current memory usage.
+1. **Find your Pod's current memory usage.**
 
   ```text
   oc adm top pod
@@ -111,17 +111,17 @@ To get started with the demonstration, create an application on the OpenShift cl
 
   In the example output above, the current memory utilization is 89 Mi. Your value will vary - take note of it for use in the next step.
 
-2. Navigate to your OpenShift web console and find your Quarkus Deployment. 
+1. **Navigate to your OpenShift web console and find your Quarkus Deployment.**
 
   Under the *Administrator* perspective, navigate to *Worklaods* -> *Deployments* and make sure you're in the *autoscaling-demo* project.
 
   ![autoscaling-deployment](/images/autoscaling-deployment.png)
   
-1. Click on the three dots associated with the Quarkus Deployment, then click Edit resource limits:
+1. **Click on the three dots associated with the Quarkus Deployment, then click Edit resource limits.**
 
   ![autoscaling-deployment-2](images/autoscaling-deployment-2.png)
 
-1. Set the following resource requests and limits:
+1. **Set the following resource requests and limits.**
 
   - CPU Request: 5 millicores
   - CPU Limit: 10 millicores
@@ -136,11 +136,11 @@ To get started with the demonstration, create an application on the OpenShift cl
   
   For more information about Kubernetes resource requests and limmits, you can read the documentation [here](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/). 
 
-2. Click Save for the changes to be applied to the Deployment and for a new Pod to spin up.
+1. **Click Save for the changes to be applied to the Deployment and for a new Pod to spin up.**
 
   Next, you will need to create a HorizontalPodAutoscaler that defines the scaling boundries and triggers for autoscaling to occur.
 
-1. In the OpenShift web console, click the three dots associated with the Quarkus Deployment once again, then select Add HorizontalPodAutoscaler and fill in the fields with the following values.
+1. **In the OpenShift web console, click the three dots associated with the Quarkus Deployment once again, then select Add HorizontalPodAutoscaler and fill in the fields with the following values.**
   
   - Minimum Replicas: 1
   - Maximum Replicas: 5
@@ -152,7 +152,7 @@ To get started with the demonstration, create an application on the OpenShift cl
 
   Note that a 55% memory utilization threshold is probably too low for a production workload and would likely trigger autoscaling very often. This number is being used for demonstration purposes only because we want to ensure autoscaling occurs. 
 
-2. Navigate to the HorizontalPodAutoscalers page in the OpenShift console, and click the HPA named `example` (unless you provided a different name).
+1. **Navigate to the HorizontalPodAutoscalers page in the OpenShift console, and click the HPA named `example` (unless you provided a different name).**
 
   ![example-hpa](images/example-hpa.png)
 
@@ -183,13 +183,13 @@ To get started with the demonstration, create an application on the OpenShift cl
     ```
   </details>
 
-3. From your command line terminal, set the hostname of your Quarkus application route as the variable `$QUARKUS_HOST`
+1. **From your command line terminal, set the hostname of your Quarkus application route as the variable `$QUARKUS_HOST`.**
 
   ```text
   QUARKUS_HOST=$(oc get route autoscale-quarkus -o=jsonpath='{.spec.host}')
   ``` 
 
-1. Annotate your Quarkus application route to use the round-robin load balancing algorithm.
+1. **Annotate your Quarkus application route to use the round-robin load balancing algorithm.**
 
   ```text
   oc annotate route autoscale-quarkus haproxy.router.openshift.io/balance=roundrobin
@@ -197,7 +197,7 @@ To get started with the demonstration, create an application on the OpenShift cl
 
   This will ensure that as new pods are created, requests are balanced evenly among them.
 
-2. Run the following command to add dummy data into memory. This command will take ~200 seconds to run - continue to the next step while it runs.
+1. **Run the following command to add dummy data into memory. This command will take ~200 seconds to run - continue to the next step while it runs.**
 
   ```text
   for ((i = 1; i <= 100; i++ )); do curl http://$QUARKUS_HOST/hello/fill/$i ; sleep 2 ; done
@@ -207,7 +207,7 @@ To get started with the demonstration, create an application on the OpenShift cl
 
   If your memory utilization is not reaching 55%, open another terminal session and run another instance of the above `for` loop concurrently. You can open as many sessions as you need to send enough requests.
 
-3. Once one or more new pods have been created, navigate to the Pods page in the OpenShift console.
+1. **Once one or more new pods have been created, navigate to the Pods page in the OpenShift console.**
 
   ![autoscaling-pods](/images/autoscaling-pods.png)
 
