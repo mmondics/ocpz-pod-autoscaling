@@ -6,7 +6,6 @@ metadata:
     component: parksmap
     role: frontend
   name: parksmap
-  namespace: national-parks
 spec:
   selector:
     matchLabels:
@@ -32,7 +31,6 @@ metadata:
   labels:
     app: parksmap
   name: parksmap
-  namespace: national-parks
 spec:
   selector:
     app: parksmap
@@ -48,7 +46,6 @@ metadata:
   labels:
     app: parksmap
   name: parksmap
-  namespace: national-parks
 spec:
   path: /
   to:
