@@ -20,7 +20,7 @@ spec:
       containers:
         - name: parksmap
           image: >-
-            quay.io/mmondics/national-parks-web-manifest:v1
+            quay.io/mmondics/national-parks-frontend:manifest
           ports:
             - containerPort: 8080
               protocol: TCP
