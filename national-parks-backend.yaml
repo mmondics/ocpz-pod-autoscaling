@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: national-parks-app
+    role: backend
+    type: parksmap-backend
+    component: nationalparks
+  name: nationalparks
+spec:
+  selector:
+    matchLabels:
+      app: nationalparks
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nationalparks
+        component: nationalparks
+        role: backend
+        type: parksmap-backend
+    spec:
+      containers:
+        - name: nationalparks
+          image: >-
+            quay.io/mmondics/national-parks-backend:manifest
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nationalparks
+  labels:
+    app: national-parks-app
+    role: backend
+    type: parksmap-backend
+    component: nationalparks
+spec:
+  selector:
+    app: nationalparks
+  ports:
+    - name: 8080-tcp
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: nationalparks
+  labels:
+    app: national-parks-app
+    role: backend
+    type: parksmap-backend
+    component: nationalparks
+spec:
+  to:
+    kind: Service
+    name: nationalparks
+    weight: 100
+  port:
+    targetPort: 8080-tcp
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
