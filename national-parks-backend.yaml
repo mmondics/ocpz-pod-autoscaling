@@ -132,7 +132,4 @@ spec:
     weight: 100
   port:
     targetPort: 8080-tcp
-  tls:
-    termination: edge
-    insecureEdgeTerminationPolicy: Redirect
   wildcardPolicy: None
