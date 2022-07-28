@@ -32,7 +32,7 @@ spec:
             - name: MONGODB_ADMIN_PASSWORD
               value: mongodb
             - name: LICENSE
-              value: acecpt
+              value: accept
           ports:
             - containerPort: 27017
               protocol: TCP
