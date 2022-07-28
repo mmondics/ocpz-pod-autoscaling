@@ -31,11 +31,13 @@ spec:
               value: mongodb
             - name: MONGODB_ADMIN_PASSWORD
               value: mongodb
+            - name: LICENSE
+              value: acecpt
           ports:
             - containerPort: 27017
               protocol: TCP
           image: >-
-            image-registry.openshift-image-registry.svc:5000/openshift/mongodb:3.6
+            quay.io/mmondics/mongo:3.6-manifest
 ---
 apiVersion: v1
 kind: Service
