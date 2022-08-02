@@ -37,7 +37,7 @@ spec:
             - containerPort: 27017
               protocol: TCP
           image: >-
-            quay.io/mmondics/mongo:3.6-manifest
+            quay.io/mmondics/mongodb:3.6-manifest
 ---
 apiVersion: v1
 kind: Service
