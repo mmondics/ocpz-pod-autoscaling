@@ -39,7 +39,7 @@ To get started with the demonstration, create an application on the OpenShift cl
 
   You can find credentials and all necessary information from the *OpenShift on IBM Z - Bastion with Single Master Node* tile in your TechZone [My Reservations Page](https://techzone.ibm.com/my/reservations). Further details can be found within your *Project Kit*, which is linked on your reservation page.
 
-1. Cr**eate a new project.**
+1. **Create a new project.**
 
   ```text
   oc new-project hpa-demo
@@ -220,6 +220,32 @@ To get started with the demonstration, create an application on the OpenShift cl
   autoscale-quarkus-5b6b645f64-wmcvm   1/1     Running             0          22s
   ```
 
+TODO: add a wrap up section here.
+
 The HorizontalPodAutoscaler object created in the hpa-demo project can be modified with more parameters to customize the behavior of the autoscaling. For example, Scaling Policies can be used to control the rate at which the pods scale up or down by setting a specific number or specific percentage to scale in a specified period of time. Further configuration is outside the scope of this demo, but you can read more about HPA customization in the OpenShift documentation [here](https://docs.openshift.com/container-platform/4.10/nodes/pods/nodes-pods-autoscaling.html#nodes-pods-autoscaling-best-practices-hpa_nodes-pods-autoscaling).
 
 ## Vertical Pod Autoscaling
+
+While *Horizontal* Pod Autoscaling is helpful for handling sudden or unexpected changes in resource usage, it doesn't do much to fix one of the most common issues in microservice development and administration - improperly sized applications. When you deploy an application with Kubernetes, you set the requests and limits for CPU and memory, and then they keep those set values unless and until someone goes in and manually changes them. This is antithetical to the Kubernetes objective to be an automated, hands-off container orchestration platform that takes care of these tedious tasks.
+
+The **Vertical Pod Autoscaler (VPA)** solves this problem by allowing Kubernetes to right-size application resource limits based on their historic use. The VPA constantly reviews the historic CPU and memory use for specified pods and compares them to current use. If the VPA decides that the resource limits should be updated, it will either *recommend new values* for you to manually update, or *automatically update* the resource limits to the recommended values if you allow the VPA to do so.
+
+From a developer's point of view, allowing the VPA to recommend or apply new amounts of CPU and memory allocated to an application removes the need for developers to know exactly how many resources will be used once the application is put into production. It is not uncommon for developers to have to guess how their code will perform when moved from a dev/test environment into production. And even if the developers have a production-like environment for their dev/test, it is very difficult to guess how many resources will be consumed once end users start accessing the production application. Furthermore, CPU and memory usage are often dynamic values that increase as time passes or vary with the time of year. For many applications, it doesn't make sense to keep the initial values for CPU and memory for the whole life of the application.
+
+From an administrator's point of view, the VPA helps to improve stability of workloads, as well as improving their cost efficiency. Having too few resources can lead to degraded application performance or even disruptive errors. Having too many resources can lead to waste and degraded performance of other applications because the CPU and memory are unnecessarily committed to applications that don't need them.
+
+The Vertical Pod Autoscaler is a great tool to help cloud native developers and administrators focus on their many tasks by outsourcing the application sizing to OpenShift Container Platform.
+
+The VPA process flow is as follows:
+
+1. Vertical Pod Autoscaler operator is installed in the OpenShift cluster
+2. VPA object is created and watches an application resources such as a Deployment
+3. VPA monitors and analyzes application resource usage for a period of time
+4. The VPA determines that resource limits need updated, at which point it will either:
+   - Recommend new values for resource limits, or
+   - Automatically apply new values for resource limits 
+
+The action in step 4 depends on how an administrator configured the VPA. If the VPA is allowed to automatically apply new resource limits, the existing application pods will be terminated and new pods with the updated values will be started.
+
+To get started with the VPA part of this demonstration, you will need to deploy another application and define resource limits for it. For the sake of variety, let's deploy a different application than we did in the previous section.
+
